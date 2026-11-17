@@ -1,0 +1,12 @@
+Guía rápida: subir a GitHub Pages
+
+1. Extraer el ZIP.
+2. Entrar a un repositorio PUBLICO nuevo de GitHub (nombre: mesa-de-oriente).
+3. En Code > Add file > Upload files arrastrar el contenido de esta carpeta (NO el ZIP, NO la carpeta exterior).
+4. Commit changes.
+5. Settings > Pages > Deploy from a branch > main > /(root) > Save.
+6. Abrir https://TU_USUARIO.github.io/mesa-de-oriente/
+
+Archivos esenciales: index.html, data.js, app.js, assets/.
+
+Precaucion: la pagina y los datos publicados son visibles para cualquier persona con el enlace.
