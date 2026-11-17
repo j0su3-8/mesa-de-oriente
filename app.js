@@ -1,4 +1,4 @@
-/* Mesa de Oriente · versión 2 · sin librerías externas */
+/* Mesa de Oriente · versión 3 · sin librerías externas */
 (()=>{'use strict';
 const D=window.MESA_DATA;
 const $=s=>document.querySelector(s);
@@ -32,7 +32,7 @@ const tally=buildTotals();
 function fmt(q){return (Math.round(q*100)/100).toLocaleString('es-GT',{maximumFractionDigits:2})};
 function measure(q,unit){const plural={'unidad':['unidad','unidades'],'diente':['diente','dientes'],'hoja':['hoja','hojas'],'taza':['taza','tazas'],'cda':['cda.','cdas.'],'cdta':['cdta.','cdtas.'],'paquete':['paquete','paquetes']};if(q>=1000&&unit==='g')return fmt(q/1000)+' kg';if(unit==='g'||unit==='ml')return fmt(q)+' '+unit;return fmt(q)+' '+(plural[unit]?.[q===1?0:1]||unit)}
 const groupOrder=['Proteínas','Granos y tortillas','Verduras y frutas','Condimentos y hierbas'];
-function renderShopping(){const checked=store.get('mesa-shopping-v2');const items=Object.entries(D.catalog).filter(([key,v])=>v.group!=='Preparado'&&(tally.req[key]||key==='sal'));const done=items.filter(([key])=>checked.includes(key)).length;
+function renderShopping(){const checked=store.get('mesa-shopping-v3');const items=Object.entries(D.catalog).filter(([key,v])=>v.group!=='Preparado'&&(tally.req[key]||key==='sal'));const done=items.filter(([key])=>checked.includes(key)).length;
  $('#shoppingStatus').textContent=done+' de '+items.length+' productos marcados';$('#shoppingProgress').style.width=Math.round(done/items.length*100)+'%';
  let html='';for(const group of groupOrder){let it=items.filter(([key,v])=>v.group===group);if(state.shoppingPending)it=it.filter(([key])=>!checked.includes(key));if(it.length===0)continue;
  html+=`<div class="category-head"><span>${e(group)}</span><span class="subtle">${it.length} artículos</span></div>`;
@@ -40,7 +40,7 @@ function renderShopping(){const checked=store.get('mesa-shopping-v2');const item
  }
  if(state.shoppingPending&&!html)html='<p class="empty">¡Ya está todo marcado! Cambia el filtro para ver la lista completa.</p>';
  $('#shoppingList').innerHTML=html;
- $('#buySummary').textContent=`Cantidades calculadas sumando las 21 comidas de ambos y las cuatro preparaciones base. Por ejemplo: ${fmt(tally.req.tomate)} tomates en recetas → comprar ${D.catalog.tomate.buy}; ${fmt(tally.req.cebolla)} cebollas → comprar ${D.catalog.cebolla.buy}.`;
+ $('#buySummary').textContent=`Cantidades calculadas sumando las 21 comidas de ambos y las dos preparaciones base. Por ejemplo: ${fmt(tally.req.tomate)} tomates en recetas → comprar ${D.catalog.tomate.buy}; ${fmt(tally.req.cebolla)} cebollas → comprar ${D.catalog.cebolla.buy}.`;
  $('#shoppingOptional').innerHTML=D.optionalShopping.map(it=>`<div class="extra-line"><b>${e(it.name)}</b><span>${e(it.qty)}</span></div>`).join('');
  $('#pendingToggle').textContent=state.shoppingPending?'Ver toda la lista':'Solo faltantes';
 }
@@ -53,16 +53,16 @@ function renderRecipes(){let all=[...D.recipes,...D.bases];const f=state.filter;
 }
 const tasks=[
  ['Revisar todos los ingredientes','Confirmar tomates, cebollas, ajos, limones y hierbas antes de encender la estufa.'],
- ['Remojar frijoles y garbanzos','Opcional para frijoles, recomendado para garbanzos: durante 8–12 h en refrigerador.'],
- ['Cocer frijoles','Preparar 2.3 kg secos por tandas; guardar porciones de ¾ y 1 taza.'],
- ['Cocer pollo base','Preparar 4.2 kg crudos, desmenuzar y pesar 2,770 g cocidos en bolsas.'],
- ['Cocer lentejas y garbanzos','Separar 3 tazas cocidas de lentejas y 1 taza de garbanzos.'],
+ ['Remojar los frijoles (opcional)','Si prefieren, remójenlos 8–12 h en refrigeración para acortar la cocción.'],
+ ['Cocer los frijoles','Preparar ~1.4 kg secos por tandas; separar ⅚ taza cocida por comida para los dos.'],
+ ['Cocer pollo base','Preparar 4.8 kg crudos, desmenuzar y reunir 3,530 g cocidos distribuidos en 17 porciones para dos.'],
+ ['Preparar las verduras','Revisar tomate, güisquil, ejotes, pepino, repollo y aguacate para las distintas recetas.'],
  ['Porcionar queso y huevos','Queso para desayuno y cena; huevos cocidos para oficina si lo prefieren.'],
- ['Separar proteínas frescas','350 g de pollo crudo para lunes y 350 g para sábado; pescado para miércoles; res para viernes. Congelar lo que no se use pronto.'],
+ ['Separar proteínas frescas','430 g de pollo crudo para lunes y 430 g para sábado; pescado para miércoles y res para viernes. Congelar lo que no se use pronto.'],
  ['Rotular y congelar','Escribir nombre del alimento y día de consumo en los recipientes destinados a jueves–sábado.'],
  ['Preparar loncheras seguras','Geles de hielo congelados, recipientes cerrados y refrigeración al llegar al trabajo.']
 ];
-function renderPrep(){const done=store.get('mesa-prep-v2');$('#prepStatus').textContent=done.length+' de '+tasks.length+' tareas terminadas';$('#prepProgress').style.width=Math.round(done.length/tasks.length*100)+'%';
+function renderPrep(){const done=store.get('mesa-prep-v3');$('#prepStatus').textContent=done.length+' de '+tasks.length+' tareas terminadas';$('#prepProgress').style.width=Math.round(done.length/tasks.length*100)+'%';
  $('#prepList').innerHTML=tasks.map((t,i)=>`<label class="prep-step"><input type="checkbox" data-task="${i}" ${done.includes(i)?'checked':''}><div><h4>${e(t[0])}</h4><p>${e(t[1])}</p></div></label>`).join('');
  $('#prepBases').innerHTML=D.bases.map(r=>`<div class="prep-card"><h3>${e(r.title)}</h3><p>${e(r.short)}<br><strong>${e(r.yieldinfo)}</strong></p><button class="btn alt sm" data-recipe="${e(r.id)}">Ver los ${r.steps.length} pasos completos</button></div>`).join('');
 }
@@ -75,7 +75,7 @@ function openRecipe(id){const r=byId[id];if(!r)return;
  $('#modalPortions').innerHTML=split;
  $('#modalSteps').innerHTML=r.steps.map((st,i)=>`<li><span class="stepnum">${i+1}</span><p>${e(st)}</p></li>`).join('');
  $('#modalTip').textContent=r.tip||r.yieldinfo||'';
- const keys=r.ingredients.map(it=>it.key),bases=[];if(keys.includes('frijol_cocido'))bases.push('base_frijoles');if(keys.includes('pollo_cocido'))bases.push('base_pollo');if(keys.includes('lenteja_cocida'))bases.push('base_lentejas');if(keys.includes('garbanzo_cocido'))bases.push('base_garbanzos');
+ const keys=r.ingredients.map(it=>it.key),bases=[];if(keys.includes('frijol_cocido'))bases.push('base_frijoles');if(keys.includes('pollo_cocido'))bases.push('base_pollo');
  $('#modalRelated').innerHTML=bases.length?`<h3 class="subheading">Preparaciones previas necesarias</h3><div class="related-buttons">${bases.map(id=>`<button class="btn ghost sm" data-recipe="${id}">${e(byId[id].title)} →</button>`).join('')}</div>`:'';
  $('#overlay').classList.add('open');$('#overlay').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';$('#modalBox').scrollTop=0;$('#closeModal').focus();
 }
@@ -85,11 +85,11 @@ async function copyText(s){try{await navigator.clipboard.writeText(s);alert('Lis
 function init(){state.selected=todayIndex();renderToday();renderWeek();renderShopping();renderPrep();renderRecipes();
  $('#sourcesList').innerHTML=D.sources.map(s=>`<li><a href="${e(s.url)}" target="_blank" rel="noopener noreferrer">${e(s.label)}</a></li>`).join('');
  document.addEventListener('click',ev=>{const n=ev.target.closest('[data-section]');if(n){setSection(n.dataset.section);return;}const w=ev.target.closest('[data-day]');if(w){state.selected=+w.dataset.day;renderWeek();return;}const r=ev.target.closest('[data-recipe]');if(r){openRecipe(r.dataset.recipe);return;}const f=ev.target.closest('[data-filter]');if(f){state.filter=f.dataset.filter;renderRecipes();}});
- document.addEventListener('change',ev=>{const b=ev.target.closest('[data-buy]');if(b){let a=store.get('mesa-shopping-v2');a=ev.target.checked?[...new Set([...a,b.dataset.buy])]:a.filter(x=>x!==b.dataset.buy);store.set('mesa-shopping-v2',a);renderShopping();}const t=ev.target.closest('[data-task]');if(t){let a=store.get('mesa-prep-v2');const x=+t.dataset.task;a=ev.target.checked?[...new Set([...a,x])]:a.filter(y=>y!==x);store.set('mesa-prep-v2',a);renderPrep();}});
+ document.addEventListener('change',ev=>{const b=ev.target.closest('[data-buy]');if(b){let a=store.get('mesa-shopping-v3');a=ev.target.checked?[...new Set([...a,b.dataset.buy])]:a.filter(x=>x!==b.dataset.buy);store.set('mesa-shopping-v3',a);renderShopping();}const t=ev.target.closest('[data-task]');if(t){let a=store.get('mesa-prep-v3');const x=+t.dataset.task;a=ev.target.checked?[...new Set([...a,x])]:a.filter(y=>y!==x);store.set('mesa-prep-v3',a);renderPrep();}});
  $('#recipeSearch').addEventListener('input',renderRecipes);
  $('#pendingToggle').addEventListener('click',()=>{state.shoppingPending=!state.shoppingPending;renderShopping();});
- $('#resetShopping').addEventListener('click',()=>reset('mesa-shopping-v2',renderShopping));
- $('#resetPrep').addEventListener('click',()=>reset('mesa-prep-v2',renderPrep));
+ $('#resetShopping').addEventListener('click',()=>reset('mesa-shopping-v3',renderShopping));
+ $('#resetPrep').addEventListener('click',()=>reset('mesa-prep-v3',renderPrep));
  $('#copyShopping').addEventListener('click',()=>copyText(shoppingText()));
  $('#printShopping').addEventListener('click',()=>{setSection('compras');window.print();});
  $('#seeTomorrow').addEventListener('click',()=>{state.selected=nextIndex(todayIndex());setSection('semana');});
